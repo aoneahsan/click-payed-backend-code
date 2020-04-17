@@ -3,10 +3,17 @@
 namespace App\Http\Controllers\Api\Auth;
 
 use App\Http\Controllers\Controller;
-use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
+
+use App\User;
+use App\Model\UserDetails;
+use App\Model\UserAccount;
+use App\Http\Resources\UserResource;
+
+use Spatie\Permission\Models\Role;
+use Spatie\Permission\Models\Permission;
 
 class ApiAuthController extends Controller
 {
@@ -15,7 +22,7 @@ class ApiAuthController extends Controller
     {
         $request->validate([
             'email' => 'required|email',
-            'password' => 'required',
+            'password' => 'required'
         ]);
 
         $user = User::where('email', $request->email)->first();
@@ -26,14 +33,9 @@ class ApiAuthController extends Controller
             ]);
         }
 
-        $tokken = $user->createToken($request->device_name)->plainTextToken;
+        // $tokken = $user->createToken($request->device_name)->plainTextToken;
 
-        $response = [
-            'user' => $user,
-            'tokken' => $tokken,
-        ];
-
-        return $response()->json(['data' => $response], 201);
+        return response()->json(['data' => new UserResource($user)], 201);
     }
 
     public function registerApi(Request $request)
@@ -43,23 +45,41 @@ class ApiAuthController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string'],
-            'device_name' => ['required', 'string']
+            'phone_number' => ['required', 'string']
         ]);
+
+        $new_user_role = 'user';
+        if ($request->role) {
+            $new_user_role = $request->role;
+        }
 
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'phone_number' => $request->phone_number,
+            'role' => $new_user_role
         ]);
+        UserDetails::create([
+            'user_id' => $user->id
+        ]);
+        UserAccount::create([
+            'user_id' => $user->id
+        ]);
+        $user->assignRole('user');
 
-        $tokken = $user->createToken($request->device_name)->plainTextToken;
+        return response()->json(['data' => new UserResource($user)], 201);
+    }
 
-        $result = [
-            'user' => $user,
-            'tokken' => $tokken,
-        ];
+    public function logoutApi(Request $request)
+    {
 
-        return response()->json(['data' => $result], 201);
+        // dd($request);
+        // return response()->json(['data' => 'working']);
+        
+        $request->user()->tokens()->delete();
+        
+        return response()->json(['data' => 'User Tokkens Deleted'], 200);
     }
 
 }

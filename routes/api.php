@@ -17,14 +17,31 @@ use Illuminate\Support\Facades\Route;
 Route::post('login_api', 'Api\Auth\ApiAuthController@loginApi');
 Route::post('register_api', 'Api\Auth\ApiAuthController@registerApi');
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::group([
+    'middleware' => 'auth:sanctum',
+    'namespace' => 'Api'
+], function () {
+
+    // Logout Route
+    Route::post('logout_api', 'Auth\ApiAuthController@logoutApi');
+
+    // Test Routes Api
+    Route::get('secure_test', function () {
+        return response()->json(['data' => 'Secure Test ok working']);
+    });
+
+    // User Permissions Route Api
+    Route::post('get_user_permissions', 'User\ApiUserController@getUserPermissions');
+    Route::post('check_user_has_permissions', 'User\ApiUserController@checkUserHasPermission');
+
+    // User Account Routes (get coins, balance etc)
+    Route::get('get_user_account_data', 'User\ApiUserController@getUserAccountData');
+    Route::get('get_user_details_data', 'User\ApiUserController@getUserDetailsData');
 });
 
 // Route::middleware('auth:api')->get('/user', function (Request $request) {
 //     return $request->user();
 // });
-
-Route::get('test', function () {
-    return response()->json(['data' => 'ok working']);
+Route::get('simple_test', function () {
+    return response()->json(['data' => 'Simple Test ok working']);
 });

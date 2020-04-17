@@ -7,9 +7,11 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
+use Spatie\Permission\Traits\HasRoles;
+
 class User extends Authenticatable
 {
-    use Notifiable, HasApiTokens;
+    use Notifiable, HasApiTokens, HasRoles;
 
     /**
      * The attributes that are mass assignable.
@@ -17,7 +19,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password',
+        'name', 'email', 'password', 'phone_number', 'profile_img', 'role'
     ];
 
     /**
@@ -37,4 +39,25 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function getTokken()
+    {
+        // return $this->createToken($request->device_name)->plainTextToken;
+        return $this->createToken('mobile')->plainTextToken;
+    }
+
+    public function getProfileImg()
+    {
+        return $this->profile_img;
+    }
+
+    public function account()
+    {
+        return $this->hasOne('App\Model\UserAccount');
+    }
+
+    public function details()
+    {
+        return $this->hasOne('App\Model\UserDetails');
+    }
 }
