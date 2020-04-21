@@ -37,6 +37,17 @@ Route::group([
     // User Account Routes (get coins, balance etc)
     Route::get('get_user_account_data', 'User\ApiUserController@getUserAccountData');
     Route::get('get_user_details_data', 'User\ApiUserController@getUserDetailsData');
+
+    // Search User Routes APIs
+    Route::post('search_person_by_number', 'User\ApiUserController@searchPerson');
+
+    // Buy Coins Api
+    Route::post('buy_coins', 'User\ApiUserController@buyCoinsRequest');
+
+    // Redeem Coins Api
+    Route::post('redeem_coins', 'User\ApiUserController@redeemCoinsRequest');
+
+    // Transfer Coins Routes Api
 });
 
 // Route::middleware('auth:api')->get('/user', function (Request $request) {
