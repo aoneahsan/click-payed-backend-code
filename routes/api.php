@@ -48,6 +48,17 @@ Route::group([
     Route::post('redeem_coins', 'User\ApiUserController@redeemCoinsRequest');
 
     // Transfer Coins Routes Api
+    Route::post('transfer_coins', 'User\ApiUserController@transferCoinsRequest');
+
+    // Topup Wallet Requests Route API
+    Route::post('topup_wallet', 'User\ApiUserController@submitTopupWalletRequest');
+
+    // Withdrawal Request Route API
+    Route::post('withdrawal_request', 'User\ApiUserController@submitWithdrawalRequest');
+
+    // Update User Profile Route API
+    Route::post('get_user_profile_data', 'User\ApiUserController@getUserProfileData');
+    Route::post('update_user_profile_data', 'User\ApiUserController@updateUserProfile');
 });
 
 // Route::middleware('auth:api')->get('/user', function (Request $request) {

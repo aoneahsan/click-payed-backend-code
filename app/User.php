@@ -60,4 +60,9 @@ class User extends Authenticatable
     {
         return $this->hasOne('App\Model\UserDetails');
     }
+
+    public function achievements()
+    {
+        return $this->hasOne('App\Model\UserAchievements');
+    }
 }

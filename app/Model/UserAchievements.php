@@ -4,9 +4,9 @@ namespace App\Model;
 
 use Illuminate\Database\Eloquent\Model;
 
-class UserDetails extends Model
+class UserAchievements extends Model
 {
     protected $fillable = [
-        'user_id', 'cnic', 'location', 'city', 'country'
+        'user_id', 'game_id', 'coins_earned', 'coins_spend'
     ];
 }
