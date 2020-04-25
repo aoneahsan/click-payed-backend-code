@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\User;
 use App\Model\UserAccount;
 use App\Model\UserDetails;
+use App\Model\UserTransactionHistory;
 use App\Model\TopupWalletRequest;
 use App\Model\WithDrawalRequest;
 
@@ -15,8 +16,8 @@ use App\Http\Resources\UserResource;
 use App\Http\Resources\UserProfileResource;
 use App\Http\Resources\UserAccountResource;
 use App\Http\Resources\UserDetailsResource;
+use App\Http\Resources\UserTransactionHistoryResource;
 use App\Http\Resources\SearchUserResource;
-
 
 class ApiUserController extends Controller
 {
@@ -64,7 +65,12 @@ class ApiUserController extends Controller
         }
 
         $result = User::where('id', $request->user()->id)->update([
-            'profile_img' => $profile_image ? $profile_image : 'No Image Found'
+            'name' => $request->name,
+        ]);
+            
+        $result = UserDetails::Where('user_id', $request->user()->id)->update([
+            'city' => $request->city,
+            'country' => $request->country
         ]);
 
         if ($result) {
@@ -81,7 +87,7 @@ class ApiUserController extends Controller
         $user_id = $request->user()->id;
         $user_data = User::where('id', $user_id)->with('account')->first();
         $user_account_details = $user_data['account'];
-        return response()->json(['data' => new UserAccountResource($user_account_details)]);
+        return response()->json(['data' => new UserAccountResource($user_account_details)], 200);
     }
 
     public function getUserDetailsData(Request $request)
@@ -245,6 +251,16 @@ class ApiUserController extends Controller
             return response()->json(['error' => 'Error Occured Try Again!'], 500);
         }
         
+    }
+
+    public function getTransactionHistory(Request $request)
+    {
+        $records = UserTransactionHistory::where('user_id', $request->user()->id)->get();
+        if ($records) {
+            return response()->json(['data' => UserTransactionHistoryResource::collection($records)], 200);
+        } else {
+            return response()->json(['data' => 'No Records Found!'], 200);
+        }
     }
 
 }

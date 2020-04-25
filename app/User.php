@@ -9,6 +9,11 @@ use Laravel\Sanctum\HasApiTokens;
 
 use Spatie\Permission\Traits\HasRoles;
 
+use App\Model\UserAccount;
+use App\Model\UserDetails;
+use App\Model\UserAchievements;
+use App\Model\UserTransactionHistory;
+
 class User extends Authenticatable
 {
     use Notifiable, HasApiTokens, HasRoles;
@@ -64,5 +69,10 @@ class User extends Authenticatable
     public function achievements()
     {
         return $this->hasOne('App\Model\UserAchievements');
+    }
+
+    public function transactions()
+    {
+        return $this->hasMany('App\Model\UserTransactionHistory');
     }
 }
