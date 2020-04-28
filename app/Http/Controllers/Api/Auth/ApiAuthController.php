@@ -10,7 +10,7 @@ use Illuminate\Validation\ValidationException;
 use App\User;
 use App\Model\UserDetails;
 use App\Model\UserAccount;
-use App\Http\Resources\UserResource;
+use App\Http\Resources\User\UserResource;
 
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;

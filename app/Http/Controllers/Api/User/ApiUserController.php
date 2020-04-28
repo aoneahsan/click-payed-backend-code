@@ -12,12 +12,12 @@ use App\Model\UserTransactionHistory;
 use App\Model\TopupWalletRequest;
 use App\Model\WithDrawalRequest;
 
-use App\Http\Resources\UserResource;
-use App\Http\Resources\UserProfileResource;
-use App\Http\Resources\UserAccountResource;
-use App\Http\Resources\UserDetailsResource;
-use App\Http\Resources\UserTransactionHistoryResource;
-use App\Http\Resources\SearchUserResource;
+use App\Http\Resources\User\UserResource;
+use App\Http\Resources\User\UserProfileResource;
+use App\Http\Resources\User\UserAccountResource;
+use App\Http\Resources\User\UserDetailsResource;
+use App\Http\Resources\User\UserTransactionHistoryResource;
+use App\Http\Resources\User\SearchUserResource;
 
 class ApiUserController extends Controller
 {
@@ -260,6 +260,37 @@ class ApiUserController extends Controller
             return response()->json(['data' => UserTransactionHistoryResource::collection($records)], 200);
         } else {
             return response()->json(['data' => 'No Records Found!'], 200);
+        }
+    }
+
+    public function saveUserFirebaseToken(Request $request)
+    {
+        $request->validate([
+            'token' => 'required'
+        ]);
+
+        $result = User::where('id', $request->user()->id)->update([
+            'firebase_token' => $request->token
+        ]);
+
+        if ($result) {
+            return response()->json(['data' => 'Done, Token Saved Successfully!'], 200);
+        } else {
+            return response()->json(['error' => 'Error Occured While Saving Token!'], 500);
+        }
+        
+    }
+
+    public function deleteUserFirebaseToken(Request $request)
+    {
+        $result = User::where('id', $request->user()->id)->update([
+            'firebase_token' => null
+        ]);
+
+        if ($result) {
+            return response()->json(['data' => 'Done, Token Removed Successfully!'], 200);
+        } else {
+            return response()->json(['error' => 'Error Occured While Removing Token!'], 500);
         }
     }
 

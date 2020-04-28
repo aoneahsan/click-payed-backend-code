@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Resources;
+namespace App\Http\Resources\User;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class UserTransactionHistoryResource extends JsonResource
+class UserDetailsResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -14,6 +14,10 @@ class UserTransactionHistoryResource extends JsonResource
      */
     public function toArray($request)
     {
-        return parent::toArray($request);
+        return [
+            // 'id' => $this->id,
+            'cnic' => $this->cnic,
+            'location' => $this->location
+        ];;
     }
 }

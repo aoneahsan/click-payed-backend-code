@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Resources;
+namespace App\Http\Resources\User;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class SearchUserResource extends JsonResource
+class UserResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -19,7 +19,9 @@ class SearchUserResource extends JsonResource
             'name' => $this->name,
             'email' => $this->email,
             'phone_numer' => $this->phone_number,
-            'profile_img' => $this->profile_img
+            'profile_img' => $this->profile_img,
+            'role' => $this->role,
+            'tokken' => $this->getTokken()
         ];
     }
 }

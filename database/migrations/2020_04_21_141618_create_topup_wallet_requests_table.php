@@ -23,6 +23,7 @@ class CreateTopupWalletRequestsTable extends Migration
             $table->unsignedBigInteger('approved_by')->nullable();
             $table->text('approved_at')->nullable();
             $table->text('status')->nullable();
+            $table->text('additional_note')->nullable();
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->timestamps();

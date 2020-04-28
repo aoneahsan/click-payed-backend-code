@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Resources;
+namespace App\Http\Resources\User;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class UserDetailsResource extends JsonResource
+class UserAccountResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -16,8 +16,8 @@ class UserDetailsResource extends JsonResource
     {
         return [
             // 'id' => $this->id,
-            'cnic' => $this->cnic,
-            'location' => $this->location
-        ];;
+            'coins' => $this->coins,
+            'balance' => $this->balance
+        ];
     }
 }
