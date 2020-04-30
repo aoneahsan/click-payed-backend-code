@@ -2,22 +2,20 @@
 
 namespace App\Http\Controllers\Api\User;
 
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-
-use App\User;
+use App\Http\Resources\User\SearchUserResource;
+use App\Http\Resources\User\UserAccountResource;
+use App\Http\Resources\User\UserDetailsResource;
+use App\Http\Resources\User\UserProfileResource;
+use App\Http\Resources\User\UserResource;
+use App\Http\Resources\User\UserTransactionHistoryResource;
+use App\Model\TopupWalletRequest;
 use App\Model\UserAccount;
 use App\Model\UserDetails;
 use App\Model\UserTransactionHistory;
-use App\Model\TopupWalletRequest;
 use App\Model\WithDrawalRequest;
-
-use App\Http\Resources\User\UserResource;
-use App\Http\Resources\User\UserProfileResource;
-use App\Http\Resources\User\UserAccountResource;
-use App\Http\Resources\User\UserDetailsResource;
-use App\Http\Resources\User\UserTransactionHistoryResource;
-use App\Http\Resources\User\SearchUserResource;
+use App\User;
+use Illuminate\Http\Request;
 
 class ApiUserController extends Controller
 {
@@ -33,14 +31,15 @@ class ApiUserController extends Controller
         return response()->json(['data' => $permissions], 404);
     }
 
-    public function getUserProfileData(Request $request) {
+    public function getUserProfileData(Request $request)
+    {
         $user = User::where('id', $request->user()->id)->with('account')->with('details')->first();
         if ($user) {
             return response()->json(['data' => new UserProfileResource($user)], 200);
         } else {
             return response()->json(['error' => 'User Not Found!'], 500);
         }
-        
+
     }
 
     public function updateUserProfile(Request $request)
@@ -49,25 +48,25 @@ class ApiUserController extends Controller
             'name' => 'required',
             // 'email' => 'required',
             'city' => 'required',
-            'country' => 'required',
+            'country' => 'required'
             // 'phone_number' => 'required',
         ]);
 
         // dd($request);
 
-        $profile_image = null;
-        if($request->hasfile('file')){
-            $image_array = $request->file('file');
-            $image_ext = $image_array->getClientOriginalExtension();
-            $profile_image = "profile_img_".rand(123456,999999).".".$image_ext;
-            $destination_path = public_path('/uploaded/userdata/');
-            $image_array->move($destination_path,$profile_image);
-        }
+        // $profile_image = null;
+        // if ($request->hasfile('file')) {
+        //     $image_array = $request->file('file');
+        //     $image_ext = $image_array->getClientOriginalExtension();
+        //     $profile_image = "profile_img_" . rand(123456, 999999) . "." . $image_ext;
+        //     $destination_path = public_path('/uploaded/userdata/');
+        //     $image_array->move($destination_path, $profile_image);
+        // }
 
         $result = User::where('id', $request->user()->id)->update([
-            'name' => $request->name,
+            'name' => $request->name
         ]);
-            
+
         $result = UserDetails::Where('user_id', $request->user()->id)->update([
             'city' => $request->city,
             'country' => $request->country
@@ -78,7 +77,6 @@ class ApiUserController extends Controller
         } else {
             return response()->json(['error' => $request], 500);
         }
-        
 
     }
 
@@ -97,7 +95,7 @@ class ApiUserController extends Controller
         $user_details = $user_data['details'];
         return response()->json(['data' => new UserDetailsResource($user_details)]);
     }
-    
+
     public function searchPerson(Request $request)
     {
         $request->validate([
@@ -110,7 +108,7 @@ class ApiUserController extends Controller
         } else {
             return response()->json(['data' => new SearchUserResource($user)], 200);
         }
-        
+
     }
 
     public function buyCoinsRequest(Request $request)
@@ -125,9 +123,9 @@ class ApiUserController extends Controller
             $new_coins = $user_coins + ($request->amount * 10);
             $new_balance = $user_balance - $request->amount;
 
-            $result = UserAccount::where('id', $user_id)->update([
+            $result = UserAccount::where('user_id', $user_id)->update([
                 'coins' => $new_coins,
-                'balance' => $new_balance,
+                'balance' => $new_balance
             ]);
 
             if ($result) {
@@ -153,9 +151,9 @@ class ApiUserController extends Controller
             $new_coins = $user_coins - $request->number_of_coins;
             $new_balance = $user_balance + ($request->number_of_coins / 10);
 
-            $result = UserAccount::where('id', $user_id)->update([
+            $result = UserAccount::where('user_id', $user_id)->update([
                 'coins' => $new_coins,
-                'balance' => $new_balance,
+                'balance' => $new_balance
             ]);
 
             if ($result) {
@@ -187,11 +185,11 @@ class ApiUserController extends Controller
             $sender_user_new_coins = $sender_user_coins - $request->coins_to_transfer;
             $reciver_user_new_coins = $reciver_user_coins + $request->coins_to_transfer;
 
-            UserAccount::where('id', $sender_user_id)->update([
+            UserAccount::where('user_id', $sender_user_id)->update([
                 'coins' => $sender_user_new_coins
             ]);
 
-            $result = UserAccount::where('id', $request->revicer_id)->update([
+            $result = UserAccount::where('user_id', $request->revicer_id)->update([
                 'coins' => $reciver_user_new_coins
             ]);
 
@@ -227,7 +225,7 @@ class ApiUserController extends Controller
         } else {
             return response()->json(['error' => 'Error Occured Try Again!'], 500);
         }
-        
+
     }
 
     public function submitWithdrawalRequest(Request $request)
@@ -239,6 +237,16 @@ class ApiUserController extends Controller
         ]);
 
         $user_id = $request->user()->id;
+
+        $user_data = User::where('id', $user_id)->with('account')->first();
+        $user_balance = $user_data['account']->balance;
+
+        $new_user_balance = $user_balance - $request->amount;
+
+        UserAccount::where('user_id', $user_id)->update([
+            'balance' => $new_user_balance
+        ]);
+
         $result = WithDrawalRequest::create([
             'user_id' => $user_id,
             'amount' => $request->amount,
@@ -250,7 +258,7 @@ class ApiUserController extends Controller
         } else {
             return response()->json(['error' => 'Error Occured Try Again!'], 500);
         }
-        
+
     }
 
     public function getTransactionHistory(Request $request)
@@ -278,7 +286,7 @@ class ApiUserController extends Controller
         } else {
             return response()->json(['error' => 'Error Occured While Saving Token!'], 500);
         }
-        
+
     }
 
     public function deleteUserFirebaseToken(Request $request)

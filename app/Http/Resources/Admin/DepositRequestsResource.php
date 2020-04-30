@@ -16,9 +16,10 @@ class DepositRequestsResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'date_time' => $this->created_at,
-            'account_name' => $this->user()->name,
-            'account_no' => $this->user()->phone_number,
+            'date_time' => date('F j, Y', strtotime($this->created_at)),
+            'user_id' => $this->user_details->id,
+            'account_name' => $this->user_details->name,
+            'account_no' => $this->user_details->phone_number,
             'amount' => $this->amount,
             'status' => $this->status,
             'trx_id' => $this->trx_id

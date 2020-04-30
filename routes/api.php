@@ -28,6 +28,8 @@ Route::group([
 
     // Deposit Component Routes APIs
     Route::post('get_deposit_requests', 'Admin\ApiAdminPanelUserController@getDepositRequests');
+    Route::post('approve_deposit_request', 'Admin\ApiAdminPanelUserController@approveDepositRequest');
+    Route::post('reject_deposit_request', 'Admin\ApiAdminPanelUserController@rejectDepositRequest');
 
 });
 
@@ -43,11 +45,6 @@ Route::group([
 
     // Logout Route
     Route::post('logout_api', 'Auth\ApiAuthController@logoutApi');
-
-    // Test Routes Api
-    Route::get('secure_test', function () {
-        return response()->json(['data' => 'Secure Test ok working']);
-    });
 
     // User Permissions Route Api
     Route::post('get_user_permissions', 'User\ApiUserController@getUserPermissions');

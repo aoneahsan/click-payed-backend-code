@@ -3,17 +3,16 @@
 namespace App\Http\Controllers\Api\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\User\UserResource;
+use App\Model\UserAccount;
+use App\Model\UserDetails;
+use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 
-use App\User;
-use App\Model\UserDetails;
-use App\Model\UserAccount;
-use App\Http\Resources\User\UserResource;
-
-use Spatie\Permission\Models\Role;
-use Spatie\Permission\Models\Permission;
+// use Spatie\Permission\Models\Role;
+// use Spatie\Permission\Models\Permission;
 
 class ApiAuthController extends Controller
 {
@@ -29,7 +28,7 @@ class ApiAuthController extends Controller
 
         if (!$user || !Hash::check($request->password, $user->password)) {
             throw ValidationException::withMessages([
-                'email' => ['The provided credentials are incorrect.'],
+                'email' => ['The provided credentials are incorrect.']
             ]);
         }
 
@@ -76,9 +75,9 @@ class ApiAuthController extends Controller
 
         // dd($request);
         // return response()->json(['data' => 'working']);
-        
+
         $request->user()->tokens()->delete();
-        
+
         return response()->json(['data' => 'User Tokkens Deleted'], 200);
     }
 
