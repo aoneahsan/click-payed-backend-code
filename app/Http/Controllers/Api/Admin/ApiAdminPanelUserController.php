@@ -9,6 +9,7 @@ use App\Http\Resources\Admin\DepositRequestsResource;
 use App\Model\TopupWalletRequest;
 // use App\Model\UserDetails;
 use App\Model\UserAccount;
+use App\Model\UserTransactionHistory;
 // use App\Model\UserAchievements;
 // use App\Model\UserTransactionHistory;
 use App\User;
@@ -31,6 +32,57 @@ use Illuminate\Http\Request;
 
 class ApiAdminPanelUserController extends Controller
 {
+
+    public function getAllDepositAccounts(Request $request)
+    {
+        # code...
+    }
+
+    public function addNewDepositAccount(Request $request)
+    {
+        $request->validate([
+            
+        ]);
+    }
+
+    public function makeDepositRequest(Request $request)
+    {
+        $request->validate([
+            'user_id' => 'required',
+            'amount' => 'required',
+            'trx_id' => 'required',
+        ]);
+
+        $request_time = Carbon::now();
+
+        $user_data = User::where('id', $request->user_id)->with('account')->first();
+        $user_balance = $user_data['account']->balance;
+        $new_balance = $user_balance + $request->amount;
+
+        UserAccount::where('user_id', $request->user_id)->update([
+            'balance' => $new_balance
+        ]);
+
+        $result = UserTransactionHistory::create([
+            'user_id' => $request->user_id,
+            'transaction_type' => 'direct_deposit_request',
+            'trx_id' => $request->trx_id,
+            'amount' => $request->amount,
+            'remaining_balance' => $new_balance,
+            'approved_by' => $request->user()->id
+        ]);
+
+        if ($result) {
+            $data = [
+                'note' => "Deposit Done!",
+                'date_time' => $request_time
+            ];
+            return response()->json(['data' => $data], 200);
+        } else {
+            return response()->json(['error' => "Error Occured!"], 500);
+        }
+    }
+
     public function getDepositRequests(Request $request)
     {
         // DB::enableQueryLog();
@@ -62,6 +114,16 @@ class ApiAdminPanelUserController extends Controller
 
         UserAccount::where('user_id', $request->user_id)->update([
             'balance' => $new_balance
+        ]);
+
+        UserTransactionHistory::create([
+            'user_id' => $request->user_id,
+            'topup_request_id' => $request->id,
+            'transaction_type' => 'credit',
+            'trx_id' => $request->trx_id,
+            'amount' => $request->amount,
+            'remaining_balance' => $new_balance,
+            'approved_by' => $request->user()->id
         ]);
 
         if ($result) {

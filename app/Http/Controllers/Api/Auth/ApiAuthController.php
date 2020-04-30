@@ -20,26 +20,23 @@ class ApiAuthController extends Controller
     public function loginApi(Request $request)
     {
         $request->validate([
-            'email' => 'required|email',
+            'phone_number' => 'required',
             'password' => 'required'
         ]);
 
-        $user = User::where('email', $request->email)->first();
+        $user = User::where('phone_number', $request->phone_number)->first();
 
         if (!$user || !Hash::check($request->password, $user->password)) {
             throw ValidationException::withMessages([
-                'email' => ['The provided credentials are incorrect.']
+                'phone_number' => ['The provided credentials are incorrect.']
             ]);
         }
-
-        // $tokken = $user->createToken($request->device_name)->plainTextToken;
 
         return response()->json(['data' => new UserResource($user)], 201);
     }
 
     public function registerApi(Request $request)
     {
-        // dd($request);
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
@@ -72,12 +69,7 @@ class ApiAuthController extends Controller
 
     public function logoutApi(Request $request)
     {
-
-        // dd($request);
-        // return response()->json(['data' => 'working']);
-
         $request->user()->tokens()->delete();
-
         return response()->json(['data' => 'User Tokkens Deleted'], 200);
     }
 

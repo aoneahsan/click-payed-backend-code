@@ -27,6 +27,9 @@ Route::group([
 ], function () {
 
     // Deposit Component Routes APIs
+    Route::post('get_all_deposit_accounts', 'Admin\ApiAdminPanelUserController@getAllDepositAccounts');
+    Route::post('add_new_deposit_account', 'Admin\ApiAdminPanelUserController@addNewDepositAccount');
+    Route::post('make_deposit_request', 'Admin\ApiAdminPanelUserController@makeDepositRequest');
     Route::post('get_deposit_requests', 'Admin\ApiAdminPanelUserController@getDepositRequests');
     Route::post('approve_deposit_request', 'Admin\ApiAdminPanelUserController@approveDepositRequest');
     Route::post('reject_deposit_request', 'Admin\ApiAdminPanelUserController@rejectDepositRequest');

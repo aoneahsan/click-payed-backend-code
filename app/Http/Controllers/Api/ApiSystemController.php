@@ -18,7 +18,7 @@ class ApiSystemController extends Controller
         $admin = User::create([
             'name' => 'admin',
             'email' => 'a@cp.c',
-            'phone_number' => '03046619706',
+            'phone_number' => '03000000001',
             'password' => Hash::make('aaaaaa'),
             'role' => 'admin'
         ]);
@@ -33,7 +33,7 @@ class ApiSystemController extends Controller
         $editor = User::create([
             'name' => 'editor',
             'email' => 'e@cp.c',
-            'phone_number' => '03046619706',
+            'phone_number' => '03000000002',
             'password' => Hash::make('aaaaaa'),
             'role' => 'editor'
         ]);
@@ -48,7 +48,7 @@ class ApiSystemController extends Controller
         $user = User::create([
             'name' => 'user',
             'email' => 'u@cp.c',
-            'phone_number' => '03046619706',
+            'phone_number' => '03000000003',
             'password' => Hash::make('aaaaaa'),
             'role' => 'user'
         ]);

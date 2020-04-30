@@ -15,6 +15,13 @@ class CreateDepositAccountsTable extends Migration
     {
         Schema::create('deposit_accounts', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('user_id');
+            $table->text('payment_method')->nullable();
+            $table->text('account_number')->nullable();
+            $table->text('status')->nullable();
+            $table->text('order_no')->nullable();
+            $table->text('additional_note')->nullable();
+            $table->text('extra_field')->nullable();
             $table->timestamps();
         });
     }
