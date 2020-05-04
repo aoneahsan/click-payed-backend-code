@@ -21,7 +21,8 @@ class UserResource extends JsonResource
             'phone_numer' => $this->phone_number,
             'profile_img' => $this->profile_img,
             'role' => $this->role,
-            'tokken' => $this->getTokken()
+            'tokken' => $this->getTokken(),
+            'referal_code' => $this->referer_code
         ];
     }
 }

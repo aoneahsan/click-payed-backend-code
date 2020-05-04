@@ -82,4 +82,7 @@ Route::group([
     // FireBase Plugin Route, Save Firebase Tokken when User Starts App
     Route::post('store_user_firebase_token', 'User\ApiUserController@saveUserFirebaseToken');
     Route::post('delete_user_firebase_token', 'User\ApiUserController@deleteUserFirebaseToken');
+
+    // User Transaction Histroy Routes
+    Route::post('fetch_user_transaction_history', 'User\ApiUserController@getTransactionHistory');
 });

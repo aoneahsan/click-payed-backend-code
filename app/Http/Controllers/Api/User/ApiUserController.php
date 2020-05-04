@@ -267,7 +267,7 @@ class ApiUserController extends Controller
         if ($records) {
             return response()->json(['data' => UserTransactionHistoryResource::collection($records)], 200);
         } else {
-            return response()->json(['data' => 'No Records Found!'], 200);
+            return response()->json(['data' => 'No Records Found!'], 500);
         }
     }
 

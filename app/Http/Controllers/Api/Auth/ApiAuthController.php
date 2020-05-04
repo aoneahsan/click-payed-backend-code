@@ -32,14 +32,14 @@ class ApiAuthController extends Controller
             ]);
         }
 
-        return response()->json(['data' => new UserResource($user)], 201);
+        return response()->json(['data' => new UserResource($user)], 200);
     }
 
     public function registerApi(Request $request)
     {
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+            // 'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string'],
             'phone_number' => ['required', 'string', 'unique:users']
         ]);
@@ -48,14 +48,36 @@ class ApiAuthController extends Controller
         if ($request->role) {
             $new_user_role = $request->role;
         }
+        
+        $referal_user_id = null;
+        if ($request->referal_code) {
+            $referal_user_id = User::where('referer_code', strtolower($request->referal_code))->first()->id;
+        }
 
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'phone_number' => $request->phone_number,
-            'role' => $new_user_role
-        ]);
+        $referer_code = $this->random_strings(6);
+
+        if ($referal_user_id) {
+            $user = User::create([
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+                'phone_number' => $request->phone_number,
+                'role' => $new_user_role,
+                'referer_code' => $referer_code,
+                'referer_user_id' => $referal_user_id
+            ]);
+        } else {
+            $user = User::create([
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+                'phone_number' => $request->phone_number,
+                'role' => $new_user_role,
+                'referer_code' => $referer_code
+            ]);
+        }
+        
+
         UserDetails::create([
             'user_id' => $user->id
         ]);
@@ -71,6 +93,12 @@ class ApiAuthController extends Controller
     {
         $request->user()->tokens()->delete();
         return response()->json(['data' => 'User Tokkens Deleted'], 200);
+    }
+
+    public function random_strings($length_of_string)
+    {
+        $str_result = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890abcdefghijklmnopqrstuvwxyz';
+        return strtolower(substr(str_shuffle($str_result), 0, $length_of_string));
     }
 
 }

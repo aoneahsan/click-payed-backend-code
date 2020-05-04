@@ -2,47 +2,49 @@
 
 namespace App\Http\Controllers\Api\Admin;
 
-use App\Http\Controllers\Controller;
-use App\Http\Resources\Admin\DepositRequestsResource;
-
-// Models
-use App\Model\TopupWalletRequest;
-// use App\Model\UserDetails;
-use App\Model\UserAccount;
-use App\Model\UserTransactionHistory;
-// use App\Model\UserAchievements;
-// use App\Model\UserTransactionHistory;
-use App\User;
-// use App\Model\WithDrawalRequest;
-
-// Resources
-// Simple User Related Resources
-// use App\Http\Resources\UserResource;
-// use App\Http\Resources\UserAccountResource;
-// use App\Http\Resources\UserDetailsResource;
-// use App\Http\Resources\SearchUserResource;
-// use App\Http\Resources\UserProfileResource;
-// use App\Http\Resources\UserTransactionHistoryResource;
-
-// use Illuminate\Support\Facades\DB;
-
-// AdminPanel Component Resources
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use App\Http\Resources\Admin\DepositAccountsResource;
+// Models
+use App\User;
+use App\Model\TopupWalletRequest;
+use App\Model\UserAccount;
+use App\Model\UserTransactionHistory;
+use App\Model\Admin\DepositAccount;
+
+// Resources
+
+// AdminPanel Component Resources
+use App\Http\Resources\Admin\DepositRequestsResource;
 
 class ApiAdminPanelUserController extends Controller
 {
 
     public function getAllDepositAccounts(Request $request)
     {
-        # code...
+        $accounts = DepositAccount::all();
+        return response()->json(['data' => DepositAccountsResource::collection($accounts)], 200);
     }
 
     public function addNewDepositAccount(Request $request)
     {
         $request->validate([
-            
+            'payment_method' => 'required',
+            'account_number' => 'required'
         ]);
+        
+        $result = DepositAccount::create([
+            'user_id' => $request->user()->id,
+            'payment_method' => $request->payment_method,
+            'account_number' => $request->account_number,
+            'status' => 'active'
+        ]);
+
+        $accounts = DepositAccount::all();
+
+        return response()->json(['data' => DepositAccountsResource::collection($accounts)], 200);
+
     }
 
     public function makeDepositRequest(Request $request)
@@ -62,6 +64,15 @@ class ApiAdminPanelUserController extends Controller
         UserAccount::where('user_id', $request->user_id)->update([
             'balance' => $new_balance
         ]);
+
+        if ($user_data->referer_user_id) {
+            $referral_user_data = User::where('id', $user_data->referer_user_id)->with('account')->first();
+            $referral_user_balance = $referral_user_data['account']->balance;
+            $referral_user_new_balance = ($referral_user_balance + (($request->amount * 5)/100));
+            UserAccount::where('user_id', $user_data->referer_user_id)->update([
+                'balance' => $referral_user_new_balance
+            ]);
+        }
 
         $result = UserTransactionHistory::create([
             'user_id' => $request->user_id,
@@ -115,6 +126,15 @@ class ApiAdminPanelUserController extends Controller
         UserAccount::where('user_id', $request->user_id)->update([
             'balance' => $new_balance
         ]);
+
+        if ($user_data->referer_user_id) {
+            $referral_user_data = User::where('id', $user_data->referer_user_id)->with('account')->first();
+            $referral_user_balance = $referral_user_data['account']->balance;
+            $referral_user_new_balance = ($referral_user_balance + (($request->amount * 5)/100));
+            UserAccount::where('user_id', $user_data->referer_user_id)->update([
+                'balance' => $referral_user_new_balance
+            ]);
+        }
 
         UserTransactionHistory::create([
             'user_id' => $request->user_id,

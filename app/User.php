@@ -24,7 +24,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password', 'phone_number', 'profile_img', 'role', 'firebase_token'
+        'name', 'email', 'password', 'phone_number', 'profile_img', 'role', 'firebase_token', 'referer_code', 'referer_user_id'
     ];
 
     /**
@@ -74,5 +74,10 @@ class User extends Authenticatable
     public function transactions()
     {
         return $this->hasMany('App\Model\UserTransactionHistory');
+    }
+
+    public function referals()
+    {
+        return $this->hasMany('App\User', 'referer_user_id', 'id');
     }
 }

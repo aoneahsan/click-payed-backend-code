@@ -23,3 +23,7 @@ Route::get('/home', 'HomeController@index')->name('home');
 
 
 Route::get('/init_urp', 'Api\ApiSystemController@InitAppDefaultUsersSetup');
+
+Route::get('referer_code', 'Api\ApiSystemController@refererCode');
+
+Route::get('check_admin_referals', 'Api\ApiSystemController@checkRefererCode');

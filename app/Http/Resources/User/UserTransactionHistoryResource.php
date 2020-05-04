@@ -14,6 +14,13 @@ class UserTransactionHistoryResource extends JsonResource
      */
     public function toArray($request)
     {
-        return parent::toArray($request);
+        return [
+            'id' => $this->id,
+            'trx_id' => $this->trx_id,
+            'amount' => $this->amount,
+            'remaining_balance' => $this->remaining_balance,
+            'transaction_type' => $this->transaction_type,
+            'date_time' => date('l F j, Y', strtotime($this->created_at))
+        ];
     }
 }

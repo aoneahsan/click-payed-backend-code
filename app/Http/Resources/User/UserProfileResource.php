@@ -26,7 +26,7 @@ class UserProfileResource extends JsonResource
             'coins' => $this->account->coins,
             'city' => $this->details->city,
             'country' => $this->details->country,
-            'referral_code' => null
+            'referal_code' => $this->referer_code
         ];
     }
 }
