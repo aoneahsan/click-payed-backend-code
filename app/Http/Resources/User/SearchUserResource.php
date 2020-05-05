@@ -21,7 +21,9 @@ class SearchUserResource extends JsonResource
             'phone_number' => $this->phone_number,
             'profile_img' => $this->profile_img,
             'city' => $this->details->city ? $this->details->city : 'Not Available',
-            'country' => $this->details->country ? $this->details->country : 'Not Available'
+            'country' => $this->details->country ? $this->details->country : 'Not Available',
+            'coins' => $this->account->coins,
+            'balance' => $this->account->balance
         ];
     }
 }

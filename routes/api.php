@@ -34,6 +34,14 @@ Route::group([
     Route::post('approve_deposit_request', 'Admin\ApiAdminPanelUserController@approveDepositRequest');
     Route::post('reject_deposit_request', 'Admin\ApiAdminPanelUserController@rejectDepositRequest');
 
+    // Withdrawal Component Routes APIs
+    Route::post('get_all_withdrawal_requests', 'Admin\ApiAdminPanelUserController@getAllWithdrawalRequests');
+    Route::post('approve_withdrawal_request', 'Admin\ApiAdminPanelUserController@approveWithdrawalRequest');
+    Route::post('reject_withdrawal_request', 'Admin\ApiAdminPanelUserController@rejectWithdrawalRequest');
+
+    // Manage User Coins Component Routes
+    Route::post('make_add_remove_user_coins_request', 'Admin\ApiAdminPanelUserController@makeAddRemoveUserCoinsRequest');
+
 });
 
 

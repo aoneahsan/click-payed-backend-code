@@ -102,7 +102,7 @@ class ApiUserController extends Controller
             'number' => 'required'
         ]);
 
-        $user = User::where('phone_number', $request->number)->with('details')->first();
+        $user = User::where('phone_number', $request->number)->with('details')->with('account')->first();
         if (!$user) {
             return response()->json(['data' => 'User Not Found!'], 500);
         } else {
