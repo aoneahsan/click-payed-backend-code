@@ -2,17 +2,18 @@
 
 namespace App\Http\Controllers\Api\Auth;
 
-use App\Http\Controllers\Controller;
-use App\Http\Resources\User\UserResource;
-use App\Model\UserAccount;
-use App\Model\UserDetails;
-use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use App\Http\Controllers\Controller;
 use Illuminate\Validation\ValidationException;
 
-// use Spatie\Permission\Models\Role;
-// use Spatie\Permission\Models\Permission;
+// Models
+use App\User;
+use App\Model\UserAccount;
+use App\Model\UserDetails;
+
+// Resources
+use App\Http\Resources\User\UserResource;
 
 class ApiAuthController extends Controller
 {
@@ -39,7 +40,6 @@ class ApiAuthController extends Controller
     {
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            // 'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string'],
             'phone_number' => ['required', 'string', 'unique:users']
         ]);
@@ -76,7 +76,6 @@ class ApiAuthController extends Controller
                 'referer_code' => $referer_code
             ]);
         }
-        
 
         UserDetails::create([
             'user_id' => $user->id

@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Admin\DepositAccountsResource;
 use App\Http\Resources\Admin\WithdrawalRequestsResource;
+
 // Models
 use App\User;
 use App\Model\TopupWalletRequest;
@@ -16,8 +17,6 @@ use App\Model\WithDrawalRequest;
 use App\Model\Admin\DepositAccount;
 
 // Resources
-
-// AdminPanel Component Resources
 use App\Http\Resources\Admin\DepositRequestsResource;
 
 class ApiAdminPanelUserController extends Controller
@@ -54,7 +53,7 @@ class ApiAdminPanelUserController extends Controller
         $request->validate([
             'user_id' => 'required',
             'amount' => 'required',
-            'trx_id' => 'required',
+            'trx_id' => 'required'
         ]);
 
         $request_time = Carbon::now();
@@ -98,8 +97,6 @@ class ApiAdminPanelUserController extends Controller
 
     public function getDepositRequests(Request $request)
     {
-        // DB::enableQueryLog();
-        // $log = DB::getQueryLog();
         $all_requests = TopupWalletRequest::with('user_details')->get();
         return response()->json(['data' => DepositRequestsResource::collection($all_requests)], 200);
     }
@@ -270,7 +267,7 @@ class ApiAdminPanelUserController extends Controller
         $request->validate([
             'user_id' => 'required',
             'amount' => 'required',
-            'trx_id' => 'required',
+            'trx_id' => 'required'
         ]);
 
         $request_time = Carbon::now();
@@ -344,7 +341,5 @@ class ApiAdminPanelUserController extends Controller
         } else {
             return response()->json(['error' => 'Error Occured, Request Failed!'], 500);
         }
-        
-
     }
 }

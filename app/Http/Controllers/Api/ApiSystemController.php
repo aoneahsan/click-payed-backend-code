@@ -3,10 +3,13 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Hash;
+
+// Models
+use App\User;
 use App\Model\UserAccount;
 use App\Model\UserDetails;
-use App\User;
-use Illuminate\Support\Facades\Hash;
+
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
@@ -87,9 +90,11 @@ class ApiSystemController extends Controller
         $admin_role->givePermissionTo($create_notifications_p);
         $admin_role->givePermissionTo($process_deposits_p);
         $admin_role->givePermissionTo($process_withdrawals_p);
+
         // Editor Role
         $editor_role->givePermissionTo($app_user_p);
         $editor_role->givePermissionTo($view_dashboard_p);
+        
         // Simple User Role
         $user_role->givePermissionTo($app_user_p);
 
@@ -103,11 +108,8 @@ class ApiSystemController extends Controller
 
     public function refererCode()
     {
-        
-        // This function will generate
-        // Random string of length 10
         $referer_code = $this->random_strings(6);
-        echo $referer_code;
+        return $referer_code;
     }
 
     public function random_strings($length_of_string)
@@ -119,7 +121,6 @@ class ApiSystemController extends Controller
     public function checkRefererCode()
     {
         $admin = User::where('id', 1)->with('referals')->get();
-        dd($admin->toArray());
-        return response()->json(['data' => $admin], 200);
+        return response()->json(['data' => $admin->toArray()], 200);
     }
 }

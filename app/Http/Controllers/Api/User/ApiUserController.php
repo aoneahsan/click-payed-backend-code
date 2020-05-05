@@ -2,20 +2,24 @@
 
 namespace App\Http\Controllers\Api\User;
 
+use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+
+// Models
+use App\User;
+use App\Model\UserAccount;
+use App\Model\UserDetails;
+use App\Model\WithDrawalRequest;
+use App\Model\TopupWalletRequest;
+use App\Model\UserTransactionHistory;
+
+// Resources
+use App\Http\Resources\User\UserResource;
 use App\Http\Resources\User\SearchUserResource;
 use App\Http\Resources\User\UserAccountResource;
 use App\Http\Resources\User\UserDetailsResource;
 use App\Http\Resources\User\UserProfileResource;
-use App\Http\Resources\User\UserResource;
 use App\Http\Resources\User\UserTransactionHistoryResource;
-use App\Model\TopupWalletRequest;
-use App\Model\UserAccount;
-use App\Model\UserDetails;
-use App\Model\UserTransactionHistory;
-use App\Model\WithDrawalRequest;
-use App\User;
-use Illuminate\Http\Request;
 
 class ApiUserController extends Controller
 {
@@ -46,22 +50,9 @@ class ApiUserController extends Controller
     {
         $request->validate([
             'name' => 'required',
-            // 'email' => 'required',
             'city' => 'required',
             'country' => 'required'
-            // 'phone_number' => 'required',
         ]);
-
-        // dd($request);
-
-        // $profile_image = null;
-        // if ($request->hasfile('file')) {
-        //     $image_array = $request->file('file');
-        //     $image_ext = $image_array->getClientOriginalExtension();
-        //     $profile_image = "profile_img_" . rand(123456, 999999) . "." . $image_ext;
-        //     $destination_path = public_path('/uploaded/userdata/');
-        //     $image_array->move($destination_path, $profile_image);
-        // }
 
         $result = User::where('id', $request->user()->id)->update([
             'name' => $request->name
@@ -136,7 +127,6 @@ class ApiUserController extends Controller
         } else {
             return response()->json(['data' => 'error'], 500);
         }
-
     }
 
     public function redeemCoinsRequest(Request $request)
@@ -181,7 +171,6 @@ class ApiUserController extends Controller
         $reciver_user_coins = $reciver_user_data['account']->coins;
 
         if ($request->coins_to_transfer <= $sender_user_coins) {
-
             $sender_user_new_coins = $sender_user_coins - $request->coins_to_transfer;
             $reciver_user_new_coins = $reciver_user_coins + $request->coins_to_transfer;
 
@@ -231,8 +220,6 @@ class ApiUserController extends Controller
     public function submitWithdrawalRequest(Request $request)
     {
         $request->validate([
-            // 'payment_method' => 'required',
-            // 'trx_id' => 'required',
             'amount' => 'required'
         ]);
 
@@ -301,5 +288,4 @@ class ApiUserController extends Controller
             return response()->json(['error' => 'Error Occured While Removing Token!'], 500);
         }
     }
-
 }

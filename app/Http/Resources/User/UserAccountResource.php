@@ -15,7 +15,6 @@ class UserAccountResource extends JsonResource
     public function toArray($request)
     {
         return [
-            // 'id' => $this->id,
             'coins' => $this->coins,
             'balance' => $this->balance
         ];
